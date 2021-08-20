@@ -15,10 +15,9 @@ token = os.getenv("BOT_TOKEN")
 status_log = {}
 
 
-def update_log(m_id, date, time_since_seen, last_status):
+def update_log(m_id, date, last_status):
     status_log[str(m_id)] = {
         "date": date,
-        "last seen": time_since_seen,
         "last status": last_status,
     }
     try:
@@ -34,25 +33,14 @@ def update_log(m_id, date, time_since_seen, last_status):
 
 
 def last_seen(last_online, now):
-    last_on_time = datetime.strptime(last_online, '%Y-%m-%d %H:%M:%S.%f')
-    delta = now - last_on_time
+    last_seen_time = datetime.strptime(last_online, '%Y-%m-%d %H:%M:%S.%f')
+    delta = now - last_seen_time
     return delta
 
 
 def log_status(member):
     now = datetime.now()
-    time_since_seen = 0
-    try:
-        with open('data.json', 'r') as json_file:
-            data = json.load(json_file)
-            if str(member.id) in data:
-                old_date = data[str(member.id)]["date"]
-                time_since_seen = last_seen(old_date, now)
-    except(FileNotFoundError):
-        with open('data.json', 'w') as json_file:
-            json.dump(status_log, json_file, indent=4, default=str)
-    finally:
-        update_log(member.id, now, time_since_seen, str(member.status))
+    update_log(member.id, now, str(member.status))
     
 
 @bot.event
@@ -87,8 +75,9 @@ async def lastseen(ctx):
     with open('data.json', 'r') as json_file:
          data = json.load(json_file)
     for user in usernames:
+        last_online = data[str(user.id)]['date']
         await ctx.channel.send(
-            f"I last saw {user.name} {data[str(user.id)]['last seen']} ago!"
+            f"I last saw {user.name} {last_seen(last_online, datetime.now())} ago!"
         )
 
 
