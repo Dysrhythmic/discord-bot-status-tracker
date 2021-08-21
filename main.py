@@ -100,9 +100,10 @@ async def printlog(ctx):
     await ctx.channel.send("Here are the people I have logged:")
     with open('data.json', 'r') as json_file:
          data = json.load(json_file)
-    for entry in data:
-        name = ctx.message.guild.get_member(int(entry))
-        await ctx.channel.send(name)
+    for member_id in data:
+        member_name = ctx.message.guild.get_member(int(member_id))
+        await ctx.channel.send(member_name)
+    await ctx.channel.send('...That\'s it!')
 
 
 bot.run(token)
