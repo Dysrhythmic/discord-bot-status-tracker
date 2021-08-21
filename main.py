@@ -15,8 +15,9 @@ token = os.getenv("BOT_TOKEN")
 status_log = {}
 
 
-def update_log(m_id, date, last_status):
+def update_log(m_id, m_name, date, last_status):
     status_log[str(m_id)] = {
+        "name": m_name,
         "date": date,
         "last status": last_status,
     }
@@ -40,7 +41,8 @@ def last_seen(last_online, now):
 
 def log_status(member):
     now = datetime.now()
-    update_log(member.id, now, str(member.status))
+    name = f'{member.name}#{member.discriminator}'
+    update_log(member.id, name, now, str(member.status))
     
 
 @bot.event
@@ -65,7 +67,8 @@ async def update(ctx):
     now = datetime.now()
     for member in bot.get_all_members():
         if str(member.status) != "offline":
-            update_log(member.id, now, str(member.status))
+            name = f'{member.name}#{member.discriminator}'
+            update_log(member.id, name, now, str(member.status))
     await ctx.channel.send("Update complete!")
 
 
