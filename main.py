@@ -65,7 +65,7 @@ async def update(ctx):
     now = datetime.now()
     for member in bot.get_all_members():
         if str(member.status) != "offline":
-            update_log(member.id, now, 0, str(member.status))
+            update_log(member.id, now, str(member.status))
     await ctx.channel.send("Update complete!")
 
 
